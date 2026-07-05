@@ -9,6 +9,49 @@
 
 import numpy as np
 
+"""   Eliminación de Gauss  """
+
+def Eliminacion_Gauss(A,
+                      b,
+                      ):
+    """
+    A: Matriz
+    B: Vector
+    """
+    A = np.array(A, dtype=float)
+    b = np.array(b, dtype=float)
+    n = len(b)
+    M = np.concatenate((A,b.reshape(n,1)), axis=1) # matriz ampliada (A|b)
+    
+    for k in range(n-1):
+        if M[k,k] == 0:
+            raise ValueError(f"Pivote nulo en la fila: {k}. el metodo falla")
+        for i in range(k+1, n):
+            factor = M[i,k] / M[k,k]
+            for j in range(k,n+1):
+                M[i,j] -= factor*M[k,j]     # Construyendo matriz U
+            M[i,k] = factor #    construyendo matriz L
+    print(M)
+
+    x = np.zeros(n)
+    for i in range(n-1,-1,-1):
+        suma_conocida = np.dot(M[i,i+1:n], x[i+1:n])
+        x[i] = (M[i,n] - suma_conocida) / M[i,i]
+    return x
+
+"""     Eliminación de Gauss con pivote """
+
+def gauss_pivote(A,
+                 b):
+    """
+    A: Matriz
+    B: Vector
+    """
+    A = np.array(A, dtype=float)
+    b = np.array(b, dtype=float)
+    n = len(b)
+    M = np.concatenate((A,b.reshape(n,1)), axis=1) # matriz ampliada (A|b)
+
 
 """    Metodo Gauss Seidel     """
 
