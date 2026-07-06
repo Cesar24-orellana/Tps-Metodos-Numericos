@@ -51,6 +51,29 @@ def gauss_pivote(A,
     b = np.array(b, dtype=float)
     n = len(b)
     M = np.concatenate((A,b.reshape(n,1)), axis=1) # matriz ampliada (A|b)
+    p = np.arange(n-1)
+    for k in range(n-1):
+        valores_columna = [abs(M[p[i],k]) for i in range(k,n)]
+        max_index_relativo = np.argmax(valores_columna)
+        max_index_real = k + max_index_relativo
+        if max_index_real != k:
+            p[k], p[max_index_real] = p[max_index_real], p[k]
+        fila_pivote = p[k]
+        if M[fila_pivote, k] == 0:
+            raise ValueError("El sistema no tiene solución unica (pivote nulo)")
+        
+        for i in range(k+1, n):
+            fila_actual = p[i]
+            factor = M[fila_actual, k] / M[fila_pivote,k]
+            M[fila_actual, k:] -= factor * M[fila_actual,k:]
+            M[fila_actual, k] = factor
+        
+        x = np.zeros(n)
+        for i in range(n):
+            fila_actual = p[i]
+            suma_conocida = sum(M[fila_actual,j] * x[j] for j in range(i+1, n))
+            x[i] = (M[fila_actual, n] - suma_conocida) / M[fila_actual, i]
+        return x
 
 
 """    Metodo Gauss Seidel     """
